@@ -10,33 +10,34 @@ export default function Dashboard() {
     phoneNumber: "",
     address: "",
   });
-  const [currentPage,setCurrentPage]=useState(1)
-  const recordsPerPage=9;
-  const lastIndex= recordsPerPage * currentPage 
-  const firstIndex = lastIndex - recordsPerPage
-  const records = list.slice(firstIndex,lastIndex)
-  const nPages=Math.ceil(list.length / recordsPerPage)
-  const numbers = [...Array(nPages + 1).keys()].slice(1)
-  const [editData, setEditData] = useState({})
+  const [currentPage, setCurrentPage] = useState(1);
+  const recordsPerPage = 1;
+  // const lastIndex = recordsPerPage * currentPage;
+  // const firstIndex = lastIndex - recordsPerPage;
   const [errors, seterrors] = useState({});
   const [list, setlist] = useState([]);
+  const [nPages, setnPages] = useState(null)
   const editUser = (itm) => {
-    setData(itm)
-  }
-  const previousPage=()=>{
-if(currentPage !== 1){
-  setCurrentPage(currentPage - 1)
-}
-  }
-  const nextPage=()=>{
-    if(currentPage !== nPages){
-      setCurrentPage(currentPage + 1)
+    setData(itm);
+  };
+  const previousPage = () => {
+    if (currentPage !== 1) {
+      setCurrentPage(currentPage - 1);
     }
-  }
-  const changeCurrentPage=(id)=>{
-   setCurrentPage(id)
+  };
+  const nextPage = () => {
+    if (currentPage !== nPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+  const changeCurrentPage = (id) => {
+    setCurrentPage(id);
+  };
 
-  }
+  useEffect(() => {
+    console.log(currentPage);
+  }, [currentPage])
+  
 
   const deleteUser = (itm) => {
     let l = list.filter((x) => {
@@ -51,6 +52,11 @@ if(currentPage !== 1){
       setlist(JSON.parse(localStorage.getItem("list")));
     }
   }, []);
+
+  useEffect(() => {
+    setnPages(Math.ceil(list.length / recordsPerPage))
+  }, [list])
+  
 
   const validate = () => {
     let obj = {};
@@ -138,9 +144,12 @@ if(currentPage !== 1){
                   alt="..."
                   style={{ width: "5rem" }}
                 />
-                <span style={{ marginLeft: "5rem", cursor: "pointer" }} onClick={() => {
-                  deleteUser(itm);
-                }}>
+                <span
+                  style={{ marginLeft: "5rem", cursor: "pointer" }}
+                  onClick={() => {
+                    deleteUser(itm);
+                  }}
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"
@@ -152,8 +161,14 @@ if(currentPage !== 1){
                     <path d="M12.643 15C13.979 15 15 13.845 15 12.5V5H1v7.5C1 13.845 2.021 15 3.357 15h9.286zM5.5 7h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1zM.8 1a.8.8 0 0 0-.8.8V3a.8.8 0 0 0 .8.8h14.4A.8.8 0 0 0 16 3V1.8a.8.8 0 0 0-.8-.8H.8z" />
                   </svg>
                 </span>
-                <span style={{ marginLeft: "1rem", cursor: "pointer" }} data-bs-toggle="modal"
-                  data-bs-target="#exampleModal1" onClick={() => { editUser(itm) }}>
+                <span
+                  style={{ marginLeft: "1rem", cursor: "pointer" }}
+                  data-bs-toggle="modal"
+                  data-bs-target="#exampleModal1"
+                  onClick={() => {
+                    editUser(itm);
+                  }}
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"
@@ -219,7 +234,9 @@ if(currentPage !== 1){
                         </div>
                         <div>
                           {errors.address ? (
-                            <span style={{ color: "red" }}>{errors.address}</span>
+                            <span style={{ color: "red" }}>
+                              {errors.address}
+                            </span>
                           ) : null}
                         </div>
                         <div class="mb-3">
@@ -235,7 +252,9 @@ if(currentPage !== 1){
                         </div>
                         <div>
                           {errors.phoneNumber ? (
-                            <span style={{ color: "red" }}>{errors.phoneNumber}</span>
+                            <span style={{ color: "red" }}>
+                              {errors.phoneNumber}
+                            </span>
                           ) : null}
                         </div>
                       </form>
@@ -252,23 +271,20 @@ if(currentPage !== 1){
                             if (localStorage.getItem("list")) {
                               l = JSON.parse(localStorage.getItem("list"));
                               // l.push(data);
-                              l=l.map((itm, i) => {
+                              l = l.map((itm, i) => {
                                 if (itm.phoneNumber == data.phoneNumber) {
                                   // return i
-                                  itm = data
-                                  console.log(itm)
-                                  return itm
+                                  itm = data;
+                                  console.log(itm);
+                                  return itm;
+                                } else {
+                                  return itm;
                                 }
-                                else{
-                                  return itm
-                                }
-                              })
+                              });
                               // l[x]=data
-                              
-                                console.log(l)
+
+                              console.log(l);
                               localStorage.setItem("list", JSON.stringify(l));
-                                  
-                            
                             }
                             // console.log(data, l)
                             setlist(JSON.parse(localStorage.getItem("list")));
@@ -396,7 +412,7 @@ if(currentPage !== 1){
                       name: "",
                       phoneNumber: "",
                       address: "",
-                    })
+                    });
                   }
                 }}
               >
@@ -416,14 +432,22 @@ if(currentPage !== 1){
                 Previous
               </a>
             </li>
-           {
-            numbers.map((n,i) => (
-              <li className={`page-item ${currentPage === n ? 'active' : ""}`} key={i}>
-<a className="page-link" href="#" onClick={()=>changeCurrentPage(n)}> {n}</a>
+            {/* {numbers.map((n, i) => (
+              <li
+                className={`page-item ${currentPage === n ? "active" : ""}`}
+                key={i}
+              >
+                <a
+                  className="page-link"
+                  href="#"
+                  onClick={() => changeCurrentPage(n)}
+                >
+                  {" "}
+                  {n}
+                </a>
               </li>
-            ))      
-           }
-              <li className="page-item">
+            ))} */}
+            <li className="page-item">
               <a className="page-link" href="#" onClick={nextPage}>
                 Next
               </a>
