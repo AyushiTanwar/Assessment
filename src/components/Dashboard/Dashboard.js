@@ -10,12 +10,34 @@ export default function Dashboard() {
     phoneNumber: "",
     address: "",
   });
+  const [currentPage,setCurrentPage]=useState(1)
+  const recordsPerPage=9;
+  const lastIndex= recordsPerPage * currentPage 
+  const firstIndex = lastIndex - recordsPerPage
+  const records = list.slice(firstIndex,lastIndex)
+  const nPages=Math.ceil(list.length / recordsPerPage)
+  const numbers = [...Array(nPages + 1).keys()].slice(1)
   const [editData, setEditData] = useState({})
   const [errors, seterrors] = useState({});
   const [list, setlist] = useState([]);
   const editUser = (itm) => {
     setData(itm)
   }
+  const previousPage=()=>{
+if(currentPage !== 1){
+  setCurrentPage(currentPage - 1)
+}
+  }
+  const nextPage=()=>{
+    if(currentPage !== nPages){
+      setCurrentPage(currentPage + 1)
+    }
+  }
+  const changeCurrentPage=(id)=>{
+   setCurrentPage(id)
+
+  }
+
   const deleteUser = (itm) => {
     let l = list.filter((x) => {
       return x.phoneNumber != itm.phoneNumber;
@@ -387,30 +409,22 @@ export default function Dashboard() {
       <div
         style={{ display: "flex", justifyContent: "center", marginTop: "1rem" }}
       >
-        <nav aria-label="Page navigation example">
-          <ul class="pagination">
-            <li class="page-item">
-              <a class="page-link" href="#">
+        <nav>
+          <ul className="pagination">
+            <li className="page-item">
+              <a className="page-link" href="#" onClick={previousPage}>
                 Previous
               </a>
             </li>
-            <li class="page-item">
-              <a class="page-link" href="#">
-                1
-              </a>
-            </li>
-            <li class="page-item">
-              <a class="page-link" href="#">
-                2
-              </a>
-            </li>
-            <li class="page-item">
-              <a class="page-link" href="#">
-                3
-              </a>
-            </li>
-            <li class="page-item">
-              <a class="page-link" href="#">
+           {
+            numbers.map((n,i) => (
+              <li className={`page-item ${currentPage === n ? 'active' : ""}`} key={i}>
+<a className="page-link" href="#" onClick={()=>changeCurrentPage(n)}> {n}</a>
+              </li>
+            ))      
+           }
+              <li className="page-item">
+              <a className="page-link" href="#" onClick={nextPage}>
                 Next
               </a>
             </li>
